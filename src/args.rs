@@ -1,23 +1,16 @@
 use std::env;
-use std::io;
 
-pub fn get_part() -> u32 {
-    let part: u32 = env::args().nth(1)
+pub fn get_day_part() -> (u8, u8) {
+    let day: u8 = env::args().nth(1)
+        .unwrap_or("1".to_string())
+        .parse()
+        .expect("Failed to parse day arg");
+    let mut part: u8 = env::args().nth(2)
         .unwrap_or("1".to_string())
         .parse()
         .expect("Failed to parse part arg");
     if part != 2 {
-        return 1;
+        part = 1;
     }
-    return part;
-}
-
-pub fn parse_int(num: &str) -> i32 {
-    return num.parse().expect("Failed to parse number");
-}
-
-pub fn char_parse_int(ch: &char) -> i32 {
-    let mut num = String::new();
-    num.push(*ch);
-    return parse_int(&num);
+    return (day, part);
 }

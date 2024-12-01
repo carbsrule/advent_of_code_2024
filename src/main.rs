@@ -1,10 +1,7 @@
-mod lines;
+mod args;
+mod days;
 
 fn main() {
-    let (bytes, line) = lines::read_line();
-    if bytes > 0 {
-        println!("{line}");
-    } else {
-        println!("Hello, world!");
-    }
+    let (day, part) = args::get_day_part();
+    days::run(day, part);
 }
