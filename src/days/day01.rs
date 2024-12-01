@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub fn part1(lines: Vec<String>) {
+fn get_left_and_right(lines: Vec<String>) -> (Vec<i32>, Vec<i32>) {
     let pattern = Regex::new(r"\s+").expect("Invalid regex");
     let mut left_side: Vec<i32> = Vec::new();
     let mut right_side: Vec<i32> = Vec::new();
@@ -15,6 +15,12 @@ pub fn part1(lines: Vec<String>) {
     }
     left_side.sort();
     right_side.sort();
+
+    return (left_side, right_side);
+}
+
+pub fn part1(lines: Vec<String>) {
+    let (left_side, right_side) = get_left_and_right(lines);
 
     let mut total_distance: i32 = 0;
     let mut idx: usize = 0;
