@@ -34,3 +34,22 @@ pub fn part1(lines: Vec<String>) {
     }
     println!("Total: {total_distance}");
 }
+
+pub fn part2(lines: Vec<String>) {
+    let (left_side, right_side) = get_left_and_right(lines);
+
+
+    let mut total_similarity = 0;
+    for left_el in left_side {
+        let mut appearances = 0;
+        for right_el in &right_side {
+            if left_el == *right_el {
+                appearances += 1;
+            }
+        }
+        let similarity = left_el * appearances;
+        println!("similarity({left_el}, {appearances}): {similarity}");
+        total_similarity += similarity;
+    }
+    println!("Total similarity: {total_similarity}");
+}
