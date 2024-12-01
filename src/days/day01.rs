@@ -13,14 +13,15 @@ fn get_left_and_right(lines: Vec<String>) -> (Vec<i32>, Vec<i32>) {
         left_side.push(left_val);
         right_side.push(right_val);
     }
-    left_side.sort();
-    right_side.sort();
 
     return (left_side, right_side);
 }
 
 pub fn part1(lines: Vec<String>) {
-    let (left_side, right_side) = get_left_and_right(lines);
+    let (mut left_side, mut right_side) = get_left_and_right(lines);
+
+    left_side.sort();
+    right_side.sort();
 
     let mut total_distance: i32 = 0;
     let mut idx: usize = 0;
