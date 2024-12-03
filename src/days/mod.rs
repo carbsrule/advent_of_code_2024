@@ -20,6 +20,7 @@ pub fn run(day: u8, part: u8) {
         (2, 1) => day02::part1(lines),
         (2, 2) => day02::part2(lines),
         (3, 1) => day03::part1(lines),
+        (3, 2) => day03::part2(lines),
         _ => println!("Implementation not available"),
     }
 }
