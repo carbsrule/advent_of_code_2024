@@ -1,3 +1,21 @@
+fn read_rules_and_updates(lines: Vec<String>) -> (Vec<(u32, u32)>, Vec<Vec<u32>>) {
+    let mut reading_order = true;
+    let mut order_rules: Vec<(u32, u32)> = vec![];
+    let mut updates: Vec<Vec<u32>> = vec![];
+    for line in lines {
+        if line == "" {
+            reading_order = false;
+            continue;
+        }
+        if reading_order {
+            order_rules.push(read_order(&line));
+        } else {
+            updates.push(read_pages(&line));
+        }
+    }
+    return (order_rules, updates);
+}
+
 fn read_order(line: &String)-> (u32, u32) {
     let mut order_tuple: (u32, u32) = (0, 0);
     let mut idx = 0;
@@ -42,24 +60,7 @@ fn pages_in_order(page1: u32, page2: u32, order_rules: &Vec<(u32, u32)>) -> bool
 }
 
 pub fn part1(lines: Vec<String>) {
-    let mut reading_order = true;
-    let mut order_rules: Vec<(u32, u32)> = vec![];
-    let mut updates: Vec<Vec<u32>> = vec![];
-    for line in lines {
-        if line == "" {
-            reading_order = false;
-            continue;
-        }
-        if reading_order {
-            order_rules.push(read_order(&line));
-        } else {
-            updates.push(read_pages(&line));
-        }
-    }
-
-    // println!("Order: {order_rules:?}");
-    // println!("Updates: {updates:?}");
-
+    let (order_rules, updates) = read_rules_and_updates(lines);
     let mut sum_middle_pages = 0;
     for update in updates {
         let mut order_ok = true;
