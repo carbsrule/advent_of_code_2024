@@ -90,3 +90,62 @@ pub fn part1(lines: Vec<String>) {
     }
     println!("Total: {sum_middle_pages}");
 }
+
+fn get_bad_updates(order_rules: &Vec<(u32, u32)>, updates: Vec<Vec<u32>>) -> Vec<Vec<u32>> {
+    let mut bad_updates: Vec<Vec<u32>> = vec![];
+    for update in updates {
+        'check_update:
+        for i in 0..update.len() {
+            for j in i+1..update.len() {
+                let page1 = update[i];
+                let page2 = update[j];
+                if !pages_in_order(page1, page2, &order_rules) {
+                    bad_updates.push(update);
+                    break 'check_update;
+                }
+            }
+        }
+    }
+    return bad_updates;
+}
+
+fn fix_update(order_rules: &Vec<(u32, u32)>, update: &mut Vec<u32>) -> bool {
+    let mut num_changes = 0;
+    for _ in 0..100 {
+        let mut mismatched = 0;
+        for i in 0..update.len() {
+            for j in i+1..update.len() {
+                let page1 = update[i];
+                let page2 = update[j];
+                if !pages_in_order(page1, page2, &order_rules) {
+                    print!("FIX: {update:?} -> ");
+                    (update[i], update[j]) = (update[j], update[i]);
+                    println!("{update:?}");
+                    mismatched += 1;
+                    num_changes += 1;
+                }
+            }
+        }
+        if mismatched == 0 {
+            return true;
+        }
+    }
+    print!("FAILED TO FIX: {update:?} (changes: {num_changes})");
+    return false;
+}
+
+pub fn part2(lines: Vec<String>) {
+    let (order_rules, updates) = read_rules_and_updates(lines);
+    let mut bad_updates = get_bad_updates(&order_rules, updates);
+    for mut update in &mut bad_updates {
+        let fixed = fix_update(&order_rules, &mut update);
+        if !fixed {
+            return;
+        }
+    }
+    let mut sum_middle_pages = 0;
+    for update in bad_updates {
+        sum_middle_pages += update[update.len() / 2];
+    }
+    println!("Total: {sum_middle_pages}");
+}
