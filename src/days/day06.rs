@@ -1,10 +1,10 @@
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Pos {
     row: i32,
     col: i32,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Guard {
     pos: Pos,
     dir: char,
@@ -36,11 +36,13 @@ impl Guard {
     }
 }
 
+#[derive(Clone)]
 struct Tile {
     tile: char,
     visited: bool,
 }
 
+#[derive(Clone)]
 struct Map {
     grid: Vec<Vec<Tile>>,
     guard: Guard,
@@ -109,28 +111,24 @@ fn move_guard(mut map: Map) -> (Map, bool) {
     let cols = map.grid[0].len() as i32;
     let rows = map.grid.len() as i32;
     if before_guard.pos.col < 0 || before_guard.pos.col >= cols {
-        print!("Exit horizontal from: {:?} ", map.guard.pos);
+        println!("Exit horizontal from: {:?} ", map.guard.pos);
         map.guard = before_guard;
         return (map, false);
     }
     if before_guard.pos.row < 0 || before_guard.pos.row >= rows {
-        print!("Exit vertical from: {:?} ", map.guard.pos);
+        println!("Exit vertical from: {:?} ", map.guard.pos);
         map.guard = before_guard;
         return (map, false);
     }
 
-    print!("In front of guard: {:?} {}   ", before_guard.pos, map.tile(&before_guard.pos));
     if map.tile(&before_guard.pos) == '#' {
         // turn right
         map.guard.Turn();
-        println!("Turn at {:?} to {}", map.guard.pos, map.guard.dir);
         return move_guard(map);
     }
 
     map.guard = before_guard;
     map.visit();
-
-    println!("Move {} to ({:?})", map.guard.dir, map.guard.pos);
 
     return (map, true);
 }
@@ -154,4 +152,39 @@ pub fn part1(lines: Vec<String>) {
         }
     }
     println!("Visited tiles: {}", map.visited);
+}
+
+pub fn part2(lines: Vec<String>) {
+    let original_map = read_map(lines);
+
+    let width = original_map.grid.len();
+    let height = original_map.grid[0].len();
+    let mut looping_positions = 0;
+    for row in 0..width {
+        for col in 0..height {
+            if original_map.grid[row][col].tile == '#' {
+                println!("Skip existing obstacle at ({row}, {col})");
+                continue;
+            }
+            if original_map.guard.pos.col == col as i32 && original_map.guard.pos.row == row as i32 {
+                println!("Skip guard starting position at ({row}, {col})");
+                continue;
+            }
+            print!("Testing new obstacle ({row}, {col}): ");
+            let mut map = original_map.clone();
+            let mut in_map = true;
+            map.grid[row][col].tile = '#';
+            for _ in 0..500_000 {
+                (map, in_map) = move_guard(map);
+                if !in_map {
+                    break;
+                }
+            }
+            if in_map {
+                println!("found loop");
+                looping_positions += 1;
+            }
+        }
+    }
+    println!("Looping positions: {looping_positions}");
 }
