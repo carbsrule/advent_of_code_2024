@@ -11,11 +11,11 @@ struct Guard {
 }
 
 impl Guard {
-    fn SetPos(&mut self, row: i32, col: i32) {
+    fn set_pos(&mut self, row: i32, col: i32) {
         self.pos.row = row;
         self.pos.col = col;
     }
-    fn Move(&self, vert: i32, horiz: i32) -> Guard {
+    fn move_pos(&self, vert: i32, horiz: i32) -> Guard {
         let guard = Guard{
             pos: Pos {
                 row: self.pos.row + vert,
@@ -25,7 +25,7 @@ impl Guard {
         };
         return guard;
     }
-    fn Turn(&mut self) {
+    fn turn_right(&mut self) {
         self.dir = match self.dir {
             '^' => '>',
             '>' => 'v',
@@ -85,7 +85,7 @@ fn read_map(lines: Vec<String>) -> Map {
                 visited: false,
             };
             if ['<', '^', '>', 'v'].contains(&char) {
-                map.guard.SetPos(row as i32, col as i32);
+                map.guard.set_pos(row as i32, col as i32);
                 map.guard.dir = char;
                 tile.visited = true;
                 tile.tile = '.';
@@ -101,10 +101,10 @@ fn read_map(lines: Vec<String>) -> Map {
 
 fn move_guard(mut map: Map) -> (Map, bool) {
     let before_guard = match map.guard.dir {
-        '^' => map.guard.Move(-1, 0),
-        '>' => map.guard.Move(0, 1),
-        'v' => map.guard.Move(1, 0),
-        '<' => map.guard.Move(0, -1),
+        '^' => map.guard.move_pos(-1, 0),
+        '>' => map.guard.move_pos(0, 1),
+        'v' => map.guard.move_pos(1, 0),
+        '<' => map.guard.move_pos(0, -1),
         _ => panic!("What is guard? Baby don't hurt me"),
     };
 
@@ -122,8 +122,7 @@ fn move_guard(mut map: Map) -> (Map, bool) {
     }
 
     if map.tile(&before_guard.pos) == '#' {
-        // turn right
-        map.guard.Turn();
+        map.guard.turn_right();
         return move_guard(map);
     }
 
