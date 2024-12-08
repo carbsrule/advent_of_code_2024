@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt;
 
-#[derive(PartialEq)]
+#[derive(Clone, PartialEq)]
 struct Point {
     row: i32,
     col: i32,
@@ -64,6 +64,19 @@ impl Point {
         if single {
             possibles.append(&mut vec![self.sub(&dist), other.add(&dist)]);
             possibles.retain(|antinode| antinode.in_bounds(rows, cols));
+        } else {
+            possibles.push(self.clone());
+            possibles.push(other.clone());
+            let mut antinode = self.sub(&dist);
+            while antinode.in_bounds(rows, cols) {
+                possibles.push(antinode.clone());
+                antinode = antinode.sub(&dist);
+            }
+            antinode = other.add(&dist);
+            while antinode.in_bounds(rows, cols) {
+                possibles.push(antinode.clone());
+                antinode = antinode.add(&dist);
+            }
         }
         return possibles;
     }
@@ -145,5 +158,13 @@ pub fn part1(lines: Vec<String>) {
 
     // println!("Antennas: {:?}", antennas.members);
     let num_antinodes = antennas.count_antinodes(true);
+    println!("Antinodes: {num_antinodes}");
+}
+
+pub fn part2(lines: Vec<String>) {
+    let antennas = get_antennas(lines);
+
+    // println!("Antennas: {:?}", antennas.members);
+    let num_antinodes = antennas.count_antinodes(false);
     println!("Antinodes: {num_antinodes}");
 }
