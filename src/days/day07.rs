@@ -49,10 +49,9 @@ fn handle_operation(total: &mut i64, operand: &i64, operator: char) {
     }
 }
 
-pub fn part1(lines: Vec<String>) {
+fn calibrate(lines: Vec<String>, allowed_ops: Vec<char>) -> i64 {
     let mut perms_by_length = HashMap::new();
     let pattern = Regex::new(r":?\s+").expect("Invalid regex");
-    let allowed_ops = vec!['+', '*'];
     let mut total_matches = 0;
     for line in lines {
         let (expected_total, first_num, operands) = parse_line(line, &pattern);
@@ -69,5 +68,10 @@ pub fn part1(lines: Vec<String>) {
             }
         }
     }
-    println!("Total: {total_matches}");
+    return total_matches;
+}
+
+pub fn part1(lines: Vec<String>) {
+    let calibration_result = calibrate(lines, vec!['+', '*']);
+    println!("Total: {calibration_result}");
 }
