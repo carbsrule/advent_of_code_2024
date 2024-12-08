@@ -18,8 +18,8 @@ fn generate_permutations(operators: Vec<char>, len: usize) -> Vec<Vec<char>> {
     return all_perms;
 }
 
-fn get_permutations(map: &mut HashMap<usize, Vec<Vec<char>>>, len: usize) -> &Vec<Vec<char>> {
-    return map.entry(len).or_insert(generate_permutations(vec!['+', '*'], len));
+fn get_permutations(map: &mut HashMap<usize, Vec<Vec<char>>>, allowed_ops: Vec<char>, len: usize) -> &Vec<Vec<char>> {
+    return map.entry(len).or_insert(generate_permutations(allowed_ops, len));
 }
 
 fn parse_line(line: String, splitter: &Regex) -> (i64, i64, Vec<i64>) {
@@ -52,10 +52,11 @@ fn handle_operation(total: &mut i64, operand: &i64, operator: char) {
 pub fn part1(lines: Vec<String>) {
     let mut perms_by_length = HashMap::new();
     let pattern = Regex::new(r":?\s+").expect("Invalid regex");
+    let allowed_ops = vec!['+', '*'];
     let mut total_matches = 0;
     for line in lines {
         let (expected_total, first_num, operands) = parse_line(line, &pattern);
-        let perms = get_permutations(&mut perms_by_length, operands.len() + 1);
+        let perms = get_permutations(&mut perms_by_length, allowed_ops.clone(), operands.len() + 1);
         for operators in perms {
             let mut total = first_num;
             for i in 0..operands.len() {
