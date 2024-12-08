@@ -7,6 +7,7 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 
 pub fn run(day: u8, part: u8) {
     let mut lines: Vec<String> = Vec::new();
@@ -33,6 +34,7 @@ pub fn run(day: u8, part: u8) {
         (6, 2) => day06::part2(lines),
         (7, 1) => day07::part1(lines),
         (7, 2) => day07::part2(lines),
+        (8, 1) => day08::part1(lines),
         _ => println!("Implementation not available"),
     }
 }
