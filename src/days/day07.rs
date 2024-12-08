@@ -45,6 +45,11 @@ fn handle_operation(total: &mut i64, operand: &i64, operator: char) {
     match operator {
         '+' => *total += operand,
         '*' => *total *= operand,
+        '|' => {
+            // N.B.: || operator
+            let total_str = total.to_string() + &operand.to_string();
+            *total = total_str.parse().expect("number");
+        },
         _ => panic!("invalid operator"),
     }
 }
@@ -73,5 +78,10 @@ fn calibrate(lines: Vec<String>, allowed_ops: Vec<char>) -> i64 {
 
 pub fn part1(lines: Vec<String>) {
     let calibration_result = calibrate(lines, vec!['+', '*']);
+    println!("Total: {calibration_result}");
+}
+
+pub fn part2(lines: Vec<String>) {
+    let calibration_result = calibrate(lines, vec!['+', '*', '|']);
     println!("Total: {calibration_result}");
 }
