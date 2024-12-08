@@ -46,6 +46,16 @@ impl Point {
         return res;
     }
 
+    fn in_bounds(&self, rows: i32, cols: i32) -> bool {
+        if self.col < 0 || self.col >= cols {
+            return false;
+        }
+        if self.row < 0 || self.row >= rows {
+            return false;
+        }
+        true
+    }
+
     fn generate_antinodes(&self, other: &Point, rows: usize, cols: usize, single: bool) -> Vec<Point> {
         let rows = rows as i32;
         let cols = cols as i32;
@@ -53,26 +63,20 @@ impl Point {
         let mut possibles: Vec<Point> = vec![];
         if single {
             possibles.append(&mut vec![self.sub(&dist), other.add(&dist)]);
-            possibles.retain(|antinode| {
-                if antinode.col < 0 || antinode.col >= cols {
-                    return false;
-                }
-                if antinode.row < 0 || antinode.row >= rows {
-                    return false;
-                }
-                true
-            });
+            possibles.retain(|antinode| antinode.in_bounds(rows, cols));
         }
         return possibles;
     }
 }
 
 struct AntennaSet {
-    members: HashMap<char, Vec<Point>>
+    members: HashMap<char, Vec<Point>>,
+    rows: usize,
+    cols: usize,
 }
 
 impl AntennaSet {
-    fn generate_antinodes(&self, rows: usize, cols: usize, single: bool) -> Vec<Point> {
+    fn generate_antinodes(&self, single: bool) -> Vec<Point> {
         let mut all_antinodes = vec![];
         for (_, positions) in self.members.iter() {
             if positions.len() == 0 {
@@ -80,7 +84,12 @@ impl AntennaSet {
             }
             for i in 0..positions.len() {
                 for j in i+1..positions.len() {
-                    let antinodes_for_points = positions[i].generate_antinodes(&positions[j], rows, cols, single);
+                    let antinodes_for_points = positions[i].generate_antinodes(
+                        &positions[j],
+                        self.rows,
+                        self.cols,
+                        single,
+                    );
                     for antinode in antinodes_for_points {
                         if all_antinodes.contains(&antinode) {
                             continue;
@@ -94,22 +103,22 @@ impl AntennaSet {
         return all_antinodes;
     }
 
-    fn count_antinodes(&self, rows: usize, cols: usize, single: bool) -> usize {
-        return self.generate_antinodes(rows, cols, single).len();
+    fn count_antinodes(&self, single: bool) -> usize {
+        return self.generate_antinodes(single).len();
     }
 }
 
-pub fn part1(lines: Vec<String>) {
-    let rows = lines.len();
-    let mut cols = 0;
+fn get_antennas(lines: Vec<String>) -> AntennaSet {
     let mut row = 0;
     let mut antennas = AntennaSet {
         members: HashMap::new(),
+        rows: lines.len(),
+        cols: 0,
     };
 
     for line in lines {
         if row == 0 {
-            cols = line.len();
+            antennas.cols = line.len();
         }
         let mut col = 0;
         for freq in line.chars() {
@@ -128,8 +137,13 @@ pub fn part1(lines: Vec<String>) {
         }
         row += 1;
     }
+    return antennas;
+}
+
+pub fn part1(lines: Vec<String>) {
+    let antennas = get_antennas(lines);
 
     // println!("Antennas: {:?}", antennas.members);
-    let num_antinodes = antennas.count_antinodes(rows, cols, true);
+    let num_antinodes = antennas.count_antinodes(true);
     println!("Antinodes: {num_antinodes}");
 }
