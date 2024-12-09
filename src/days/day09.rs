@@ -57,11 +57,7 @@ fn move_blocks(blocks: &mut Vec<i32>) {
     }
 }
 
-pub fn part1(lines: Vec<String>) {
-    let mut blocks = read_blocks(lines);
-    println!("Read blocks; reorganising...");
-    move_blocks(&mut blocks);
-
+fn calc_checksum(blocks: Vec<i32>) -> u64 {
     println!("Calculating checksum...");
     let mut checksum: u64 = 0;
     let mut block_num = 0;
@@ -72,5 +68,14 @@ pub fn part1(lines: Vec<String>) {
         checksum += block_num as u64 * file_id as u64;
         block_num += 1;
     }
+    return checksum;
+}
+
+pub fn part1(lines: Vec<String>) {
+    let mut blocks = read_blocks(lines);
+    println!("Read blocks; reorganising...");
+    move_blocks(&mut blocks);
+
+    let checksum = calc_checksum(blocks);
     println!("Checksum: {checksum}");
 }
