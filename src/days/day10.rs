@@ -95,7 +95,7 @@ impl Map {
         return true;
     }
 
-    fn get_summit_paths(&self) -> Vec<Vec<Pos>> {
+    fn get_summit_paths(&self, multiple_paths: bool) -> Vec<Vec<Pos>> {
         let bounds = Pos::new(self.grid.len() as i32, self.grid[0].len() as i32);
 
         let directions = [
@@ -118,7 +118,7 @@ impl Map {
                         match destination {
                             Some(dest_pos) => {
                                 if self.height(&dest_pos) == current_height + 1
-                                    && !pos_in_list(&dest_pos, &new_frontier)
+                                    && (multiple_paths || !pos_in_list(&dest_pos, &new_frontier))
                                 {
                                     new_frontier.push(dest_pos);
                                 }
@@ -177,7 +177,7 @@ pub fn part1(lines: Vec<String>) {
 
     // map.print();
 
-    let summit_paths = map.get_summit_paths();
+    let summit_paths = map.get_summit_paths(false);
     let mut total_scores = 0;
     for paths_from_trailhead in summit_paths {
         println!(
@@ -190,4 +190,21 @@ pub fn part1(lines: Vec<String>) {
         }
     }
     println!("Sum of scores: {total_scores}");
+}
+
+pub fn part2(lines: Vec<String>) {
+    let map = read_map(lines);
+    let summit_paths = map.get_summit_paths(true);
+    let mut total_ratings = 0;
+    for paths_from_trailhead in summit_paths {
+        println!(
+            "Trailhead {}:",
+            paths_from_trailhead[0].path[0].coords(),
+        );
+        total_ratings += paths_from_trailhead.len();
+        for summit in paths_from_trailhead {
+            println!("    {} via {}", summit.coords(), summit.format_path());
+        }
+    }
+    println!("Sum of ratings: {total_ratings}");
 }
