@@ -20,7 +20,7 @@ fn blink(stones: Vec<u64>) -> Vec<u64> {
     return new_stones;
 }
 
-pub fn part1(lines: Vec<String>) {
+fn load_stones(lines: Vec<String>) -> Vec<u64> {
     let pattern = Regex::new(r"\s+").expect("Invalid regex");
     let mut stones: Vec<u64> = vec![];
     for line in lines {
@@ -29,7 +29,11 @@ pub fn part1(lines: Vec<String>) {
         }
     }
     println!("Starting stones: {:?}", stones);
+    return stones;
+}
 
+pub fn part1(lines: Vec<String>) {
+    let mut stones = load_stones(lines);
     for _ in 0..25 {
         stones = blink(stones);
     }
