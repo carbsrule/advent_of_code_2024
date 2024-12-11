@@ -81,7 +81,6 @@ pub fn part1(lines: Vec<String>) {
 
 // Returns true if file was moved
 fn move_file(blocks: &mut Vec<i32>, file_start: usize, file_length: usize) -> bool {
-    let file_id = blocks[file_start];
     for i in 0..file_start {
         let mut all_free = true;
         for j in 0..file_length {

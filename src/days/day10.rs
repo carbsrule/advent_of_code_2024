@@ -67,6 +67,7 @@ impl Map {
         return self.grid[pos.row as usize][pos.col as usize];
     }
 
+    #[allow(dead_code)]
     fn print(&self) {
         println!("Map: ");
         for row in &self.grid {
